@@ -20,8 +20,12 @@ import re
 
 ## Write code to define your parse_counted_words function here.
 
-
-
+def parse_counted_words(str1):
+    x = re.findall('([0-9]+).([^A-z]*[A-z]+)', str1)
+    if len(x) >= 1:
+        return x[-1]
+    else:
+        return None
 
 ## PART 2: 200 points
 
