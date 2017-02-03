@@ -33,16 +33,43 @@ def parse_counted_words(str1):
 
 ## (a) Write Python code to determine how many of these paths identify FILES, not directories. Save that number in the variable file_paths_num.
 
+opened_file = open('computer_paths.txt')
+lines = []
+for line in opened_file:
+    line = line.rstrip()
+    if re.findall('[.][A-z]+', line):
+        lines.append(line)
+file_paths_num = len(lines)
+
 ## (b) Write Python code to determine how many of these paths are FULL paths, not relative paths. Save that number in the variable full_paths_num.
+
+opened_file = open('computer_paths.txt')
+lines = []
+for line in opened_file:
+    line = line.rstrip()
+    if re.findall('^[~/]', line):
+        lines.append(line)
+full_paths_num = len(lines)
 
 ## (c) Write Python code to determine how many of these paths describe a Python file saved inside a folder called SI206. Save that number in the variable python_course_paths.
 
+opened_file = open('computer_paths.txt')
+lines = []
+for line in opened_file:
+    line = line.rstrip()
+    if re.findall('[SI]+[206]+[/][A-z0-9]+[.][py]+', line):
+        lines.append(line)
+python_course_paths = len(lines)
+
 ## (d) Write Python code to determine how many of these paths describe a Microsoft file (a file that EITHER ends with .docx OR .xlsx, but nothing else counts) where the file name ends in a digit. Save that total in the variable microsoft_files_num.
 
-
-
-
-
+opened_file = open('computer_paths.txt')
+lines = []
+for line in opened_file:
+    line = line.rstrip()
+    if re.findall('[0-9]+[.]([docx|xlsx]+)', line):
+        lines.append(line)
+microsoft_files_num = len(lines)
 
 ## We have provided unit tests in this file. To earn the full 500 points, you'll need to pass all of the tests and will need to have followed the instructions.
 ## Each class of the tests represents one "part" of the homework, and the points for each part are divided approx. equally between each of the tests.
