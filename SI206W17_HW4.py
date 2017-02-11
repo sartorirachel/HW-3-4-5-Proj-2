@@ -14,8 +14,10 @@ from bs4 import BeautifulSoup
 
 ## Write the Python code to do so here.
 
-
-
+html_text = requests.get("http://www.nytimes.com").text 
+fileref = open("nytimes_data.html","w", encoding="utf-8")
+fileref.write(html_text)
+fileref.close()
 
 #####################
 
