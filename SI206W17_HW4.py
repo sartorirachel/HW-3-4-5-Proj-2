@@ -51,8 +51,6 @@ for x in headlines:
 	stripped_headline = x.text.replace("\n", " ").strip()
 	nytimes_headlines.append(stripped_headline)
 
-print (nytimes_headlines)
-
 #####################
 
 ## PART 3 (200 points)
@@ -76,6 +74,21 @@ htmldoc = response.text
 soup = BeautifulSoup(htmldoc,"html.parser")
 people = soup.find_all("div",{"class":"views-row"})
 umsi_titles = {}
+
+names = []
+for name in soup.find_all('div', class_="field-item even", property="dc:title"):
+	name = name.text
+	names.append(name)
+
+titles = []
+for person in soup.find_all('div', class_="field field-name-field-person-titles field-type-text field-label-hidden"):
+	title = person.text.replace("\n", " ").strip()
+	titles.append(title)
+
+i = 0
+for x in names:
+	umsi_titles[x] = titles[i]
+	i = i + 1
 
 ## It may be helpful to translate the following from English to code:
 
