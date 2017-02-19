@@ -2,6 +2,7 @@ import unittest
 import tweepy
 import requests
 import json
+import twitter_info
 
 ## SI 206 - W17 - HW5
 ## COMMENT WITH:
@@ -35,10 +36,10 @@ import json
 ## **** If you choose not to do that, we strongly advise using authentication information for an 'extra' Twitter account you make just for this class, and not your personal account, because it's not ideal to share your authentication information for a real account that you use frequently.
 
 ## Get your secret values to authenticate to Twitter. You may replace each of these with variables rather than filling in the empty strings if you choose to do the secure way for 50 EC points
-consumer_key = "" 
-consumer_secret = ""
-access_token = ""
-access_token_secret = ""
+consumer_key = twitter_info.consumer_key 
+consumer_secret = twitter_info.consumer_secret
+access_token = twitter_info.access_token
+access_token_secret = twitter_info.access_token_secret
 ## Set up your authentication to Twitter
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -52,10 +53,30 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser()) # Set up library to g
 ## 3. Invoke your function, save the return value in a variable, and explore the data you got back!
 ## 4. With what you learn from the data -- e.g. how exactly to find the text of each tweet in the big nested structure -- write code to print out content from 3 tweets, as shown above.
 
+cached_fname = "cached_twitter_data.json"
 
+try:
+	cached_file = open(cached_file, "r")
+	contents_of_cached_file = cached_file.read()
+	cached_dict = json.loads(contents_of_cahced_file)
+except:
+	cached_diction = {}
 
-
-
-
-
+def get_twitter_info(value):
+	unique_identifier = "twitter_{}".format(value)
+	if unique_identifier in cached_diction:
+		twitter_results = cached_diction[unique_identifier]
+	else:
+		twitter_results = api.search(q = value)
+		cached_diction[unique_identifier] = twitter_results
+		f = open(cached_fname, "w")
+		f.write(json.dumps(cached_diction))
+		f.close()
+	text_list = []
+	for i in range(len(twitter_results["statuses"])):
+		tweet_text = twitter_results["statuses"][i]["text"]
+		tweet_time = twitter_results["statuses"][i]["created_at"]
+		x = (tweet_text, tweet_time)
+		text_list.append(x)
+	return (text_list[:3])
 
