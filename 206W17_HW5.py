@@ -80,3 +80,14 @@ def get_twitter_info(value):
 		text_list.append(x)
 	return (text_list[:3])
 
+try:
+	search_term = input("Input keyword to search: ")
+except:
+	print ("Sorry, please try again")
+
+mytweets = (get_twitter_info(search_term))
+
+for value in mytweets:
+	print("TEXT: ", value[0])
+	print("CREATED AT: ", value[1])
+	print("\n")
