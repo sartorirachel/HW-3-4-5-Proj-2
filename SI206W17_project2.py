@@ -33,8 +33,14 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 
 ## Write the code to begin your caching pattern setup here.
 
+CACHE_FILE = "206project2_caching.json"
 
-
+try:
+	cached_file_object = open(CACHE_FILE, 'r', encoding = 'utf-8')
+	CF_contents = cached_file_object.read()
+	CACHE_DICTION = json.loads(CF_contents)
+except:
+	CACHE_DICTION = {}
 
 ## PART 1 - Define a function find_urls.
 ## INPUT: any string
@@ -45,11 +51,9 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## find_urls("I love looking at websites like http://etsy.com and http://instagram.com and stuff") should return ["http://etsy.com","http://instagram.com"]
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
-
-
-
-
-
+#def find_urls(string1):
+#	url = re.findall(r'http[s]?://(\S)+', string1)
+#	return url
 
 ## PART 2 (a) - Define a function called get_umsi_data.
 ## INPUT: N/A. No input.
