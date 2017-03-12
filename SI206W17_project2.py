@@ -68,43 +68,32 @@ def find_urls(string1):
 ## End with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11 
 
 def get_umsi_data():
-	unique_identifier = 'umsi_directory_data'
-
-	if unique_identifier in CACHE_DICTION:
-		UMSI_results = CACHE_DICTION[unique_identifier]
-		return(UMSI_results)
+	formatted_key = "umsi_directory_data"
+	if formatted_key in CACHE_DICTION:
+		htmlDoc = CACHE_DICTION[formatted_key]
 	else:
-		UMSI_list = []
-		baseurl = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
-		response = requests.get(baseurl, headers={'User-Agent': 'SI_CLASS'})
-		htmldoc = response.text
-		UMSI_list.append(htmldoc)
-
-		for i in range(11):
-			baseurl = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11'
-			response = requests.get(baseurl, headers={'User-Agent': 'SI_CLASS'})
-			htmldoc = response.text
-			UMSI_list.append(htmldoc)
-
-		CACHE_DICTION[unique_identifier] = UMSI_list
-		f = open(CACHE_FILE, 'w')
-		f.write(json.dumps(CACHE_DICTION))
-		f.close()
-		return(UMSI_list)
-
+		htmlDoc = []
+		for i in range(0, 12):
+			response = requests.get("https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=" + str(i), headers={'User-Agent': 'SI_CLASS'})
+			htmlDoc.append(response.text)
+		CACHE_DICTION[formatted_key] = htmlDoc
+		cache_file = open(CACHE_FILE, 'w', encoding = 'utf-8')
+		cache_file.write(json.dumps(CACHE_DICTION))
+		cache_file.close()
+	return htmlDoc
 
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
 
-htmldoc = get_umsi_data()
+text = get_umsi_data()
 umsi_titles = {}
-for anelm in htmldoc:
-	soup = BeautifulSoup(anelm, "html.parser")
-	people = soup.find_all('div', {'class':'views-row'})
+for i in range(0,len(text)):
+	soup = BeautifulSoup(text[i],"html.parser")
+	people = soup.find_all("div",{"class":"views-row"})
 	for p in people:
-		name_container = p.find('div', {'property':'dc:title'})
-		title_container = p.find('div', {'class':'field-name-field-person-titles'})
-		umsi_titles[name_container.text] = title_container.text
+		name = p.find(property="dc:title")
+		title = p.find("div", attrs={'class' : 'field-name-field-person-titles'})
+		umsi_titles[name.text] = title.text
 
 ## PART 3 (a) - Define a function get_five_tweets
 ## INPUT: Any string
@@ -112,16 +101,17 @@ for anelm in htmldoc:
 ## RETURN VALUE: A list of strings: A list of just the text of 5 different tweets that result from the search.
 
 def get_five_tweets(string2):
-	unique_identifier = "twitter_{}".format(string2)
-	if unique_identifier in CACHE_DICTION:
-		twitter_results = CACHE_DICTION[unique_identifier]
+	tweet_list = []
+	formatted_key = "twitter_{}".format(string2)
+	if formatted_key in CACHE_DICTION:
+		twitter_results = CACHE_DICTION[formatted_key]
 	else:
 		twitter_results = api.search(q = string2)
-		CACHE_DICTION[unique_identifier] = twitter_results
+		CACHE_DICTION[formatted_key] = twitter_results
 		f = open(CACHE_FILE, 'w')
 		f.write(json.dumps(CACHE_DICTION))
 		f.close()
-	tweet_list = []
+
 	for i in range(len(twitter_results["statuses"])):
 		tweet_text = twitter_results['statuses'][i]['text']
 		tweet_list.append(tweet_text)
