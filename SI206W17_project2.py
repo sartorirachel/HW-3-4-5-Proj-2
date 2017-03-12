@@ -40,6 +40,7 @@ try:
 	cached_file_object = open(CACHE_FILE, 'r', encoding = 'utf-8')
 	CF_contents = cached_file_object.read()
 	CACHE_DICTION = json.loads(CF_contents)
+	cache_file_object.close()
 except:
 	CACHE_DICTION = {}
 
@@ -74,8 +75,8 @@ def get_umsi_data():
 		return(UMSI_results)
 	else:
 		UMSI_list = []
-		base_url = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
-		response = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+		baseurl = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
+		response = requests.get(baseurl, headers={'User-Agent': 'SI_CLASS'})
 		htmldoc = response.text
 		UMSI_list.append(htmldoc)
 
@@ -86,7 +87,7 @@ def get_umsi_data():
 			UMSI_list.append(htmldoc)
 
 		CACHE_DICTION[unique_identifier] = UMSI_list
-		f = open(CACHE_FNAME, 'w')
+		f = open(CACHE_FILE, 'w')
 		f.write(json.dumps(CACHE_DICTION))
 		f.close()
 		return(UMSI_list)
@@ -95,11 +96,15 @@ def get_umsi_data():
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
 
-
-
-
-
-
+htmldoc = get_umsi_data()
+umsi_titles = {}
+for x in htmldoc:
+	soup = BeautifulSoup(x, "html.parser")
+	people = soup.find_all('div', {'class':'views-row'})
+	for p in people:
+		name_container = p.find('div', {'property':'dc:title'})
+		title_container = p.find('div', {'class':'field-name-field-person-titles'})
+		umsi_titles[name_container.text] = title_container.text
 
 ## PART 3 (a) - Define a function get_five_tweets
 ## INPUT: Any string
