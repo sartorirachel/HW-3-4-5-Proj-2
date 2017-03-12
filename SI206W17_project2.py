@@ -98,8 +98,8 @@ def get_umsi_data():
 
 htmldoc = get_umsi_data()
 umsi_titles = {}
-for x in htmldoc:
-	soup = BeautifulSoup(x, "html.parser")
+for anelm in htmldoc:
+	soup = BeautifulSoup(anelm, "html.parser")
 	people = soup.find_all('div', {'class':'views-row'})
 	for p in people:
 		name_container = p.find('div', {'property':'dc:title'})
@@ -111,8 +111,21 @@ for x in htmldoc:
 ## Behavior: See instructions. Should search for the input string on twitter and get results. Should check for cached data, use it if possible, and if not, cache the data retrieved.
 ## RETURN VALUE: A list of strings: A list of just the text of 5 different tweets that result from the search.
 
-
-
+def get_five_tweets(string2):
+	unique_identifier = "twitter_{}".format(string2)
+	if unique_identifier in CACHE_DICTION:
+		twitter_results = CACHE_DICTION[unique_identifier]
+	else:
+		twitter_results = api.search(q = string2)
+		CACHE_DICTION[unique_identifier] = twitter_results
+		f = open(CACHE_FILE, 'w')
+		f.write(json.dumps(CACHE_DICTION))
+		f.close()
+	tweet_list = []
+	for i in range(len(twitter_results["statuses"])):
+		tweet_text = twitter_results['statuses'][i]['text']
+		tweet_list.append(tweet_text)
+	return(tweet_list[:5])
 
 ## PART 3 (b) - Write one line of code to invoke the get_five_tweets function with the phrase "University of Michigan" and save the result in a variable five_tweets.
 
