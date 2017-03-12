@@ -11,6 +11,7 @@
 
 ## Import statements
 import unittest
+import re
 import json
 import requests
 import tweepy
@@ -51,9 +52,9 @@ except:
 ## find_urls("I love looking at websites like http://etsy.com and http://instagram.com and stuff") should return ["http://etsy.com","http://instagram.com"]
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
-#def find_urls(string1):
-#	url = re.findall(r'http[s]?://(\S)+', string1)
-#	return url
+def find_urls(string1):
+	url = re.findall(r'\bhttp[s]?://\S+\.\S{2,}', string1)
+	return url
 
 ## PART 2 (a) - Define a function called get_umsi_data.
 ## INPUT: N/A. No input.
